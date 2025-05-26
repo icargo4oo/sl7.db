@@ -1,7 +1,7 @@
 {
-    "name": "pro.db",
-    "version": "3.0.8",
-    "description": "a simple and easy database package make your life easy.",
+    "name": "sl7.db",
+    "version": "1.0.0",
+    "description": "make your db easier.",
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1"
@@ -12,8 +12,8 @@
         "json",
         "sql",
         "sqlite",
-		"m7md"
+	"?! CMV ♪"
     ],
-    "author": "M7mD",
-    "license": "CC BY-NC-ND 4.0"
+    "author": "?! CMV ♪",
+    "license": "MIT License"
 }
