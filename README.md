@@ -48,4 +48,4 @@ db.reset();// to delete all data and database.
 - Contact With Me Discord : [`@5.i4`](https://www.npmjs.com/package/sl7.db)
 
 ## License 
-- [CC BY-NC-ND 4.0](https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode)
+- [MIT License](https://opensource.org/license/mit)
