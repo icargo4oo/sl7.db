@@ -1,262 +1,116 @@
-const fs = require('fs')
-class Data {
-    constructor() {}
+const fs = require('fs');
 
+class Data {
+    constructor(options = {}) {
+        this.path = options.path || 'database.json';
+    }
+
+    _ensureFile() {
+        if (!fs.existsSync(this.path)) {
+            fs.mkdirSync(require('path').dirname(this.path), { recursive: true });
+            fs.writeFileSync(this.path, '{}');
+        }
+    }
 
     set(data, value) {
-        if (!fs.existsSync(`Database/database.json`)) {
-            fs.writeFileSync(`Database/database.json`, "{}");
-
-            if (!data) throw new TypeError("The data is not defined!")
-            const file = JSON.parse(fs.readFileSync(`Database/database.json`, "utf8"))
-            file[data] = value
-            return fs.writeFileSync(`Database/database.json`, JSON.stringify(file, null, 4))
-        } else {
-            if (!data) throw new TypeError("The data is not defined!")
-            const file = JSON.parse(fs.readFileSync(`Database/database.json`, "utf8"))
-            file[data] = value
-            return fs.writeFileSync(`Database/database.json`, JSON.stringify(file, null, 4))
-        }
+        this._ensureFile();
+        if (!data) throw new TypeError("The data is not defined!");
+        const file = JSON.parse(fs.readFileSync(this.path, 'utf8'));
+        file[data] = value;
+        fs.writeFileSync(this.path, JSON.stringify(file, null, 4));
     }
 
     fetch(data) {
-        if (!fs.existsSync(`Database/database.json`)) {
-            fs.writeFileSync(`Database/database.json`, "{}");
-
-            if (!data) throw new TypeError("The data is not defined!")
-            const file = JSON.parse(fs.readFileSync("Database/database.json", "utf8"))
-            return file[data]
-        } else {
-            if (!data) throw new TypeError("The data is not defined!")
-            const file = JSON.parse(fs.readFileSync("Database/database.json", "utf8"))
-            return file[data]
-        }
+        this._ensureFile();
+        if (!data) throw new TypeError("The data is not defined!");
+        const file = JSON.parse(fs.readFileSync(this.path, 'utf8'));
+        return file[data];
     }
+
     has(data) {
-        if (!fs.existsSync(`Database/database.json`)) {
-            fs.writeFileSync(`Database/database.json`, "{}");
-            if (!data) throw new TypeError("The data is not defined!")
-            const file = JSON.parse(fs.readFileSync("Database/database.json", "utf8"))
-            return file[data] ? true : false
-        } else {
-            if (!data) throw new TypeError("The data is not defined!")
-            const file = JSON.parse(fs.readFileSync("Database/database.json", "utf8"))
-            return file[data] ? true : false
-        }
+        this._ensureFile();
+        if (!data) throw new TypeError("The data is not defined!");
+        const file = JSON.parse(fs.readFileSync(this.path, 'utf8'));
+        return file.hasOwnProperty(data);
     }
-    fetchAll() {
-        const fetchall = JSON.parse(fs.readFileSync("Database/database.json", "utf8"))
-        return fetchall
-    }
+
     delete(data) {
-        if (!fs.existsSync(`Database/database.json`)) {
-            fs.writeFileSync(`Database/database.json`, "{}");
-            if (!data) throw new TypeError("The data is not defined!")
-            const file = JSON.parse(fs.readFileSync("Database/database.json", "utf8"))
-            if (!file[data]) throw new TypeError('Theres no data to add to database! \n' + __dirname)
-            delete file[data]
-            return fs.writeFileSync("Database/database.json", JSON.stringify(file, null, 4))
-        } else {
-            if (!data) throw new TypeError("The data is not defined!")
-            const file = JSON.parse(fs.readFileSync("Database/database.json", "utf8"))
-            if (!file[data]) throw new TypeError('Theres no data to add to database! \n' + __dirname)
-            delete file[data]
-            return fs.writeFileSync("Database/database.json", JSON.stringify(file, null, 4))
-        }
+        this._ensureFile();
+        if (!data) throw new TypeError("The data is not defined!");
+        const file = JSON.parse(fs.readFileSync(this.path, 'utf8'));
+        if (!file[data]) throw new TypeError('No data to delete!');
+        delete file[data];
+        fs.writeFileSync(this.path, JSON.stringify(file, null, 4));
     }
-    backup(fileName) {
-        if (!fs.existsSync(`Database/database.json`)) {
-            fs.writeFileSync(`Database/database.json`, "{}");
-            if (!fileName) throw new TypeError("Filename not defined!")
-            const file = JSON.parse(fs.readFileSync("Database/database.json", "utf8"))
-            return fs.writeFileSync(`${fileName}.json`, JSON.stringify(file, null, 4))
-        } else {
-            if (!fileName) throw new TypeError("Filename not defined!")
-            const file = JSON.parse(fs.readFileSync("Database/database.json", "utf8"))
-            return fs.writeFileSync(`${fileName}.json`, JSON.stringify(file, null, 4))
-        }
+
+    fetchAll() {
+        this._ensureFile();
+        return JSON.parse(fs.readFileSync(this.path, 'utf8'));
     }
+
     add(data, value) {
-        if (!fs.existsSync(`Database/database.json`)) {
-            fs.writeFileSync(`Database/database.json`, "{}");
-            if (!data) throw new TypeError("The data is not defined!")
-            if (isNaN(value)) throw new TypeError("The value must be a number!")
-            if (!this.has(data)) {
-                this.set(data, 0)
-            }
-
-            const file = JSON.parse(fs.readFileSync("Database/database.json", "utf8"))
-            file[data] += value
-            return fs.writeFileSync("Database/database.json", JSON.stringify(file, null, 4))
-        } else {
-            if (!data) throw new TypeError("The data is not defined!")
-            if (isNaN(value)) throw new TypeError("The value must be a number!")
-            if (!this.has(data)) {
-                this.set(data, 0)
-            }
-            const file = JSON.parse(fs.readFileSync("Database/database.json", "utf8"))
-            file[data] += value
-            return fs.writeFileSync("Database/database.json", JSON.stringify(file, null, 4))
-
-        }
+        this._ensureFile();
+        if (!data || isNaN(value)) throw new TypeError("Invalid data or value");
+        if (!this.has(data)) this.set(data, 0);
+        const file = JSON.parse(fs.readFileSync(this.path, 'utf8'));
+        file[data] += value;
+        fs.writeFileSync(this.path, JSON.stringify(file, null, 4));
     }
+
     subtract(data, value) {
-        if (!fs.existsSync(`Database/database.json`)) {
-            fs.writeFileSync(`Database/database.json`, "{}");
-            if (!data) throw new TypeError("The data is not defined!")
-            if (typeof value !== "number") throw new TypeError("The value must be a number!")
-            if (!this.has(data)) throw new TypeError("The data is not defined!")
-            if (typeof this.fetch(data) !== "number") throw new TypeError("The value must be number!")
-            const file = JSON.parse(fs.readFileSync("Database/database.json", "utf8"))
-            file[data] -= value
-            return fs.writeFileSync("Database/database.json", JSON.stringify(file, null, 4))
-        } else {
-            if (!data) throw new TypeError("The data is not defined!")
-            if (typeof value !== "number") throw new TypeError("The value must be a number!")
-            if (!this.has(data)) throw new TypeError("The data is not defined!")
-            if (typeof this.fetch(data) !== "number") throw new TypeError("The value must be number!")
-            const file = JSON.parse(fs.readFileSync("Database/database.json", "utf8"))
-            file[data] -= value
-            return fs.writeFileSync("Database/database.json", JSON.stringify(file, null, 4))
-        }
+        this._ensureFile();
+        if (!data || typeof value !== "number") throw new TypeError("Invalid data or value");
+        if (!this.has(data) || typeof this.fetch(data) !== "number") throw new TypeError("Data is not numeric");
+        const file = JSON.parse(fs.readFileSync(this.path, 'utf8'));
+        file[data] -= value;
+        fs.writeFileSync(this.path, JSON.stringify(file, null, 4));
     }
+
+    backup(fileName) {
+        this._ensureFile();
+        if (!fileName) throw new TypeError("Filename not defined!");
+        const file = JSON.parse(fs.readFileSync(this.path, 'utf8'));
+        fs.writeFileSync(`${fileName}.json`, JSON.stringify(file, null, 4));
+    }
+
     reset() {
-        const file = JSON.parse(fs.readFileSync("Database/database.json", "utf8"))
-        return fs.writeFileSync("Database/database.json", JSON.stringify({}, null, 4))
+        this._ensureFile();
+        fs.writeFileSync(this.path, JSON.stringify({}, null, 4));
     }
-    all(sınır = 0) {
-        if (!fs.existsSync(`Database/database.json`)) {
-            fs.writeFileSync(`Database/database.json`, "{}");
-            const object = JSON.parse(fs.readFileSync("Database/database.json", "utf8"));
 
-            var result = [];
-            for (var i in object)
-                result.push([`DATA = ${i}`, `VALUE = ${object [i]}`]);
-            return result
-        } else {
-            const object = JSON.parse(fs.readFileSync("Database/database.json", "utf8"));
-
-            var result = [];
-            for (var i in object)
-                result.push([`DATA = ${i}`, `VALUE = ${object [i]}`]);
-            return result
-        }
+    all() {
+        this._ensureFile();
+        const object = JSON.parse(fs.readFileSync(this.path, 'utf8'));
+        return Object.entries(object).map(([key, value]) => [`DATA = ${key}`, `VALUE = ${value}`]);
     }
+
     push(key, value) {
-        if (!fs.existsSync(`Database/database.json`)) {
-            fs.writeFileSync(`Database/database.json`, "{}");
-            const veri = this.fetch(key);
-            if (!veri) {
-
-                return this.set(key, [value]);
-            }
-            if (Array.isArray(veri)) {
-                veri.push(value);
-                return this.set(key, veri);
-            } else {
-
-                return this.set(key, [value]);
-            }
-        } else {
-            const veri = this.fetch(key);
-            if (!veri) {
-
-                return this.set(key, [value]);
-            }
-            if (Array.isArray(veri)) {
-                veri.push(value);
-                return this.set(key, veri);
-            } else {
-
-                return this.set(key, [value]);
-            }
-        }
+        this._ensureFile();
+        let data = this.fetch(key);
+        if (!Array.isArray(data)) data = [];
+        data.push(value);
+        this.set(key, data);
     }
-    math(data, limit, value) {
-        if (!fs.existsSync(`Database/database.json`)) {
-            fs.writeFileSync(`Database/database.json`, "{}");
-            const file = JSON.parse(fs.readFileSync("Database/database.json", "utf8"))
-            if (!data) throw new TypeError("Theres no data founded!")
-            if (!limit) throw new TypeError("The process not defined!")
-            if (!value) throw new TypeError("Theres no value entered!")
-            if (!file[data]) throw new TypeError('couldnt get the data!')
-            if (isNaN(value)) throw new TypeError("The value must be number!")
-            if (isNaN(this.fetch(data))) throw new TypeError("The value must be number!")
-            switch (limit) {
-                case "+":
-                    file[data] += value
-                    return fs.writeFileSync("Database/database.json", JSON.stringify(file, null, 4))
-                    break;
-                case "-":
-                    file[data] -= value
-                    return fs.writeFileSync("Database/database.json", JSON.stringify(file, null, 4))
-                    break;
-                case "*":
-                    file[data] *= value
-                    return fs.writeFileSync("Database/database.json", JSON.stringify(file, null, 4))
-                    break;
-                case "/":
-                    file[data] /= value
-                    return fs.writeFileSync("Database/database.json", JSON.stringify(file, null, 4))
-                    break;
-                case "%":
-                    file[data] %= value
-                    return fs.writeFileSync("Database/database.json", JSON.stringify(file, null, 4))
-                    break;
-                default:
-                    return undefined
-                    break;
-            }
-        } else {
-            const file = JSON.parse(fs.readFileSync("Database/database.json", "utf8"))
-            if (!data) throw new TypeError("Theres no data founded!")
-            if (!limit) throw new TypeError("The process not defined!")
-            if (!value) throw new TypeError("Theres no value entered!")
-            if (!file[data]) throw new TypeError('couldnt get the data!')
-            if (isNaN(value)) throw new TypeError("The value must be number!")
-            if (isNaN(this.fetch(data))) throw new TypeError("The data must be number!")
-            switch (limit) {
-                case "+":
-                    file[data] += value
-                    return fs.writeFileSync("Database/database.json", JSON.stringify(file, null, 4))
-                    break;
-                case "-":
-                    file[data] -= value
-                    return fs.writeFileSync("Database/database.json", JSON.stringify(file, null, 4))
-                    break;
-                case "*":
-                    file[data] *= value
-                    return fs.writeFileSync("Database/database.json", JSON.stringify(file, null, 4))
-                    break;
-                case "/":
-                    file[data] /= value
-                    return fs.writeFileSync("Database/database.json", JSON.stringify(file, null, 4))
-                    break;
-                case "%":
-                    file[data] %= value
-                    return fs.writeFileSync("Database/database.json", JSON.stringify(file, null, 4))
-                    break;
-                default:
-                    return undefined
-                    break;
-            }
+
+    math(data, operator, value) {
+        this._ensureFile();
+        const file = JSON.parse(fs.readFileSync(this.path, 'utf8'));
+        if (!data || !operator || isNaN(value) || isNaN(this.fetch(data))) throw new TypeError("Invalid input");
+
+        switch (operator) {
+            case '+': file[data] += value; break;
+            case '-': file[data] -= value; break;
+            case '*': file[data] *= value; break;
+            case '/': file[data] /= value; break;
+            case '%': file[data] %= value; break;
+            default: return;
         }
-
-
+        fs.writeFileSync(this.path, JSON.stringify(file, null, 4));
     }
 
     get(data) {
-        if (!fs.existsSync(`Database/database.json`)) {
-            fs.writeFileSync(`Database/database.json`, "{}");
-
-            if (!data) throw new TypeError("The data is not defined!")
-            const file = JSON.parse(fs.readFileSync("Database/database.json", "utf8"))
-            return file[data]
-        } else {
-            if (!data) throw new TypeError("The data is not defined!")
-            const file = JSON.parse(fs.readFileSync("Database/database.json", "utf8"))
-            return file[data]
-        }
+        return this.fetch(data);
     }
 }
-module.exports = new Data();
+
+module.exports = (options = {}) => new Data(options);

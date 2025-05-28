@@ -1,6 +1,6 @@
 {
-    "name": "sl7.db",
-    "version": "1.0.0",
+    "name": "sal7an.db",
+    "version": "1.0.1",
     "description": "make your db easier.",
     "main": "index.js",
     "scripts": {
@@ -10,9 +10,7 @@
         "db",
         "database",
         "json",
-        "sql",
-        "sqlite",
-	"?! CMV ♪"
+        "sql"
     ],
     "author": "?! CMV ♪",
     "license": "MIT License"
